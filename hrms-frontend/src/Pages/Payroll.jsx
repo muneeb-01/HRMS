@@ -27,26 +27,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 // import { toast } from "react-hot-toast"; // Assuming react-hot-toast for notifications, but using console.log for no external dependency
 
 // Dummy payroll data for a specific month (e.g., June 2025)
-// In a real application, this would come from a backend for the selected period
+// Added 'extractedFromPayment' boolean to each employee
 const initialPayrollData = [
   {
     id: 1,
     employeeName: "Ahsan Khan",
     department: "Engineering",
     basicSalary: 80000,
-    hra: 20000, // House Rent Allowance
-    conveyance: 5000, // Conveyance Allowance
+    hra: 20000,
+    conveyance: 5000,
     medicalAllowance: 3000,
-    pfDeduction: 5000, // Provident Fund
-    taxDeduction: 7000, // Income Tax
-    loanDeduction: 2000, // Loan installment
+    pfDeduction: 5000,
+    taxDeduction: 7000,
+    loanDeduction: 2000,
     status: "Processed",
     payrollMonth: "2025-06",
+    extractedFromPayment: false, // Processed, so not relevant for extraction
   },
   {
     id: 2,
@@ -61,6 +60,7 @@ const initialPayrollData = [
     loanDeduction: 0,
     status: "Pending",
     payrollMonth: "2025-06",
+    extractedFromPayment: false, // Default: included for payment
   },
   {
     id: 3,
@@ -75,6 +75,7 @@ const initialPayrollData = [
     loanDeduction: 1500,
     status: "Processed",
     payrollMonth: "2025-06",
+    extractedFromPayment: false,
   },
   {
     id: 4,
@@ -89,6 +90,7 @@ const initialPayrollData = [
     loanDeduction: 0,
     status: "Pending",
     payrollMonth: "2025-06",
+    extractedFromPayment: false,
   },
   {
     id: 5,
@@ -103,6 +105,7 @@ const initialPayrollData = [
     loanDeduction: 2500,
     status: "Processed",
     payrollMonth: "2025-06",
+    extractedFromPayment: false,
   },
   {
     id: 6,
@@ -117,6 +120,7 @@ const initialPayrollData = [
     loanDeduction: 0,
     status: "Pending",
     payrollMonth: "2025-06",
+    extractedFromPayment: false,
   },
   {
     id: 7,
@@ -130,7 +134,8 @@ const initialPayrollData = [
     taxDeduction: 8500,
     loanDeduction: 0,
     status: "Pending",
-    payrollMonth: "2025-06", // Added for current month
+    payrollMonth: "2025-06",
+    extractedFromPayment: false,
   },
   {
     id: 8,
@@ -144,7 +149,8 @@ const initialPayrollData = [
     taxDeduction: 6200,
     loanDeduction: 1000,
     status: "Processed",
-    payrollMonth: "2025-05", // Example for previous month
+    payrollMonth: "2025-05",
+    extractedFromPayment: false,
   },
   {
     id: 9,
@@ -158,7 +164,8 @@ const initialPayrollData = [
     taxDeduction: 7500,
     loanDeduction: 0,
     status: "Pending",
-    payrollMonth: "2025-05", // Example for previous month
+    payrollMonth: "2025-05",
+    extractedFromPayment: false,
   },
 ];
 
@@ -172,14 +179,15 @@ const availableDepartments = [
   "Sales",
 ];
 const availablePayrollMonths = ["2025-06", "2025-05", "2025-04"]; // Example months
+const availableStatuses = ["All", "Processed", "Pending", "On Hold"];
 
 export default function PayrollPage() {
   const [payrollData, setPayrollData] = useState(initialPayrollData);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("All");
-  const [selectedPayrollMonth, setSelectedPayrollMonth] = useState("2025-06"); // Default to current month
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); // State for confirmation dialog
-  const [viewMode, setViewMode] = useState("all"); // New state for radio group filter
+  const [selectedPayrollMonth, setSelectedPayrollMonth] = useState("2025-06");
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [filterStatus, setFilterStatus] = useState("All");
 
   // Helper to calculate gross pay
   const calculateGrossPay = (employee) => {
@@ -217,6 +225,15 @@ export default function PayrollPage() {
     }
   };
 
+  // Handler for individual employee extraction checkbox
+  const handleExtractFromPayment = (id, isChecked) => {
+    setPayrollData((prevData) =>
+      prevData.map((emp) =>
+        emp.id === id ? { ...emp, extractedFromPayment: isChecked } : emp
+      )
+    );
+  };
+
   // Filter and search logic for payroll data
   const filteredPayroll = useMemo(() => {
     return payrollData.filter((record) => {
@@ -241,11 +258,8 @@ export default function PayrollPage() {
         return false;
       }
 
-      // Filter by radio group viewMode
-      if (viewMode === "pending" && record.status !== "Pending") {
-        return false;
-      }
-      if (viewMode === "processed" && record.status !== "Processed") {
+      // Filter by status
+      if (filterStatus !== "All" && record.status !== filterStatus) {
         return false;
       }
 
@@ -256,50 +270,83 @@ export default function PayrollPage() {
     searchTerm,
     filterDepartment,
     selectedPayrollMonth,
-    viewMode,
+    filterStatus,
   ]);
+
+  // Determine if all *displayed pending* employees are marked for extraction
+  const allDisplayedPendingExtracted = useMemo(() => {
+    const pendingAndDisplayed = filteredPayroll.filter(
+      (emp) => emp.status === "Pending"
+    );
+    if (pendingAndDisplayed.length === 0) return false;
+    return pendingAndDisplayed.every((emp) => emp.extractedFromPayment);
+  }, [filteredPayroll]);
+
+  // Handler for master "Extract All / Include All" checkbox
+  const handleToggleAllExtraction = (isChecked) => {
+    setPayrollData((prevData) =>
+      prevData.map((emp) => {
+        // Only modify if currently pending and displayed
+        if (
+          emp.payrollMonth === selectedPayrollMonth &&
+          emp.status === "Pending" &&
+          (filterDepartment === "All" || emp.department === filterDepartment) &&
+          (searchTerm === "" ||
+            emp.employeeName
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) &&
+          (filterStatus === "All" || emp.status === filterStatus)
+        ) {
+          return { ...emp, extractedFromPayment: isChecked };
+        }
+        return emp;
+      })
+    );
+  };
 
   // Function to actually process payroll after confirmation
   const executePayrollProcessing = () => {
-    const pendingEmployees = filteredPayroll.filter(
-      (emp) => emp.status === "Pending"
+    // Filter to find employees that are Pending AND NOT extracted from payment
+    const employeesToProcess = filteredPayroll.filter(
+      (emp) => emp.status === "Pending" && !emp.extractedFromPayment
     );
 
-    if (pendingEmployees.length === 0) {
-      // toast.error("No pending payroll entries for the selected filters.");
-      console.error("No pending payroll entries for the selected filters.");
+    if (employeesToProcess.length === 0) {
+      console.error("No pending employees selected for processing.");
       setIsConfirmDialogOpen(false); // Close dialog
       return;
     }
 
     setPayrollData((prevData) =>
       prevData.map((emp) =>
-        // Only process pending employees for the currently selected month and filters
+        // Process only if: matches selected month, is Pending, is NOT extracted, and matches other display filters
         emp.payrollMonth === selectedPayrollMonth &&
         emp.status === "Pending" &&
+        !emp.extractedFromPayment && // Crucial change: only process if NOT extracted
         (filterDepartment === "All" || emp.department === filterDepartment) &&
         (searchTerm === "" ||
-          emp.employeeName.toLowerCase().includes(searchTerm.toLowerCase()))
-          ? { ...emp, status: "Processed" }
+          emp.employeeName.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (filterStatus === "All" || emp.status === filterStatus)
+          ? { ...emp, status: "Processed", extractedFromPayment: false } // Set to processed and unmark for extraction
           : emp
       )
     );
-    // toast.success(`Payroll processed for ${pendingEmployees.length} employees.`);
-    console.log(`Payroll processed for ${pendingEmployees.length} employees.`);
+    console.log(
+      `Payroll processed for ${employeesToProcess.length} employees.`
+    );
     setIsConfirmDialogOpen(false); // Close dialog after processing
-    setViewMode("processed"); // Automatically switch to "Processed Records" view after processing
   };
 
-  // Handle "Process All" action (opens confirmation dialog)
-  const handleProcessAllClick = () => {
-    // Count pending employees based on current filters
-    const pendingCount = filteredPayroll.filter(
-      (emp) => emp.status === "Pending"
+  // Handle "Process Included" action (opens confirmation dialog)
+  const handleProcessIncludedClick = () => {
+    // Count pending employees that are NOT extracted, based on current filters
+    const includedPendingCount = filteredPayroll.filter(
+      (emp) => emp.status === "Pending" && !emp.extractedFromPayment
     ).length;
-    if (pendingCount === 0) {
-      // toast.error("No pending payroll entries for the selected filters to process.");
+
+    if (includedPendingCount === 0) {
       console.error(
-        "No pending payroll entries for the selected filters to process."
+        "No pending employees to process for the selected filters."
       );
       return;
     }
@@ -353,50 +400,48 @@ export default function PayrollPage() {
           </SelectContent>
         </Select>
 
-        {/* Radio Input for Extracting/Viewing Employees */}
-        <RadioGroup
-          value={viewMode}
-          onValueChange={setViewMode}
-          className="flex gap-4 p-2 rounded-md bg-gray-50 dark:bg-gray-800 flex-wrap"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="all" id="view-all" />
-            <Label htmlFor="view-all">All Records</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="pending" id="view-pending" />
-            <Label htmlFor="view-pending">Pending for Processing</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="processed" id="view-processed" />
-            <Label htmlFor="view-processed">Processed Records</Label>
-          </div>
-        </RadioGroup>
+        {/* Status Filter */}
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableStatuses.map((status) => (
+              <SelectItem key={status} value={status}>
+                {status}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        {/* Process All Button */}
+        {/* Process Included Button */}
         <Dialog
           open={isConfirmDialogOpen}
           onOpenChange={setIsConfirmDialogOpen}
         >
           <DialogTrigger asChild>
             <Button
-              onClick={handleProcessAllClick}
+              onClick={handleProcessIncludedClick}
               className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors"
             >
-              Process All
+              Process Included
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Confirm Payroll Processing</DialogTitle>
               <DialogDescription>
-                Are you sure you want to process payroll for the **
+                You are about to process payroll for **
                 {
-                  filteredPayroll.filter((emp) => emp.status === "Pending")
-                    .length
+                  filteredPayroll.filter(
+                    (emp) =>
+                      emp.status === "Pending" && !emp.extractedFromPayment
+                  ).length
                 }{" "}
-                pending employees** currently displayed for{" "}
-                {selectedPayrollMonth}? This action cannot be undone.
+                included pending employees** for {selectedPayrollMonth}.
+                <br />
+                **Employees marked for 'Extraction from Pay' will be skipped.**
+                This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -416,6 +461,22 @@ export default function PayrollPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50 dark:bg-gray-800">
+              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                ID
+              </TableHead>{" "}
+              {/* New column for ID */}
+              {/* New column for extraction checkbox */}
+              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm w-[60px] text-center">
+                <input
+                  type="checkbox"
+                  className="form-checkbox h-4 w-4 text-red-600 rounded focus:ring-red-500 cursor-pointer"
+                  checked={allDisplayedPendingExtracted}
+                  onChange={(e) => handleToggleAllExtraction(e.target.checked)}
+                  title="Extract/Include All Pending"
+                />
+                <span className="sr-only">Toggle All Extraction</span>{" "}
+                {/* Accessible label */}
+              </TableHead>
               <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
                 Employee
               </TableHead>
@@ -441,8 +502,38 @@ export default function PayrollPage() {
               filteredPayroll.map((employee) => (
                 <TableRow
                   key={employee.id}
-                  className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
+                  // Highlight if NOT extracted AND pending (i.e., will be included in payment)
+                  className={`hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors ${
+                    !employee.extractedFromPayment &&
+                    employee.status === "Pending"
+                      ? "bg-blue-50/50 dark:bg-blue-950/50"
+                      : ""
+                  }`}
                 >
+                  <TableCell className="text-gray-600 dark:text-gray-400 font-medium">
+                    {employee.id}
+                  </TableCell>{" "}
+                  {/* Display employee ID */}
+                  {/* Individual extraction checkbox */}
+                  <TableCell className="text-center">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-red-600 rounded focus:ring-red-500 cursor-pointer"
+                      checked={employee.extractedFromPayment}
+                      onChange={(e) =>
+                        handleExtractFromPayment(employee.id, e.target.checked)
+                      }
+                      // Disable if already processed
+                      disabled={employee.status === "Processed"}
+                      title={
+                        employee.status === "Processed"
+                          ? "Already Processed"
+                          : employee.extractedFromPayment
+                          ? "Excluded from Pay"
+                          : "Included in Pay"
+                      }
+                    />
+                  </TableCell>
                   <TableCell className="font-medium text-gray-800 dark:text-gray-200">
                     {employee.employeeName}
                   </TableCell>
@@ -472,9 +563,11 @@ export default function PayrollPage() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={8}
                   className="h-24 text-center text-gray-500 dark:text-gray-400"
                 >
+                  {" "}
+                  {/* Updated colSpan */}
                   No payroll records found for the selected criteria.
                 </TableCell>
               </TableRow>

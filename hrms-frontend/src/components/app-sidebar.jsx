@@ -26,15 +26,15 @@ const sidebarLinks = [
       { to: "/dashboard", icon: Home, label: "Dashboard" },
       { to: "/employees", icon: Users, label: "Employees" },
       { to: "/attendance", icon: Calendar, label: "Attendance" },
-      { to: "/departments", icon: Building2, label: "Departments" },
+      // { to: "/departments", icon: Building2, label: "Departments" },
       { to: "/payroll", icon: CreditCard, label: "Payroll" },
       { to: "/leaves-requests", icon: FileText, label: "Leave Requests" },
     ],
   },
-  {
-    label: "System",
-    items: [{ to: "/settings", icon: Settings, label: "Settings" }],
-  },
+  // {
+  //   label: "System",
+  //   items: [{ to: "/settings", icon: Settings, label: "Settings" }],
+  // },
 ];
 
 export function AppSidebar() {
