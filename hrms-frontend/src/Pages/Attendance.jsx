@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react"; // Assuming lucide-react for icons
+import { CalendarIcon } from "lucide-react";
 
 // Dummy attendance data
 const allAttendanceRecords = [
@@ -127,22 +127,25 @@ export default function AttendancePage() {
 
   // Helper to get status color
   const getStatusColor = (status) => {
+    // Keeping existing hardcoded colors for badge backgrounds, as no direct variables
+    // for specific status badge backgrounds were provided.
+    // Updated text color for dark mode to ensure readability against dark backgrounds.
     switch (status) {
       case "Present":
-        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-[var(--foreground)]";
       case "On Leave":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200";
+        return "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-[var(--foreground)]";
       case "Late":
-        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-[var(--foreground)]";
       case "Absent":
       case "Early Out": // Both can be considered warnings/negatives
-        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200";
+        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-[var(--foreground)]";
       case "Holiday":
-        return "bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-purple-200";
+        return "bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-[var(--foreground)]";
       case "Weekend":
-        return "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300";
+        return "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-[var(--foreground)]";
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-[var(--foreground)]";
     }
   };
 
@@ -205,7 +208,8 @@ export default function AttendancePage() {
   }, [selectedDate, searchTerm, filterStatus]);
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+    // Main container background and border
+    <div className="rounded-lg border-[var(--border-color)] bg-[var(--bg-section)] text-[var(--text-body)] shadow-sm p-6">
       <div className="flex flex-col sm:flex-row gap-4 mb-6 items-center">
         {/* Date Picker */}
         <Popover>
@@ -213,23 +217,29 @@ export default function AttendancePage() {
             <Button
               variant={"outline"}
               className={`w-full sm:w-[240px] justify-start text-left font-normal ${
-                !selectedDate && "text-muted-foreground"
+                !selectedDate &&
+                "text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
               }`}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-4 w-4 text-[var(--text-muted)] dark:text-[var(--muted-foreground)]" />
               {selectedDate ? (
                 format(selectedDate, "PPP")
               ) : (
-                <span>Pick a date</span>
+                <span className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
+                  Pick a date
+                </span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto p-0 bg-[var(--popover)] text-[var(--popover-foreground)]">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
               initialFocus
+              // Calendar component uses shadcn-ui defaults, relying on variables like
+              // --background, --foreground, --primary, --primary-foreground, --border, --ring
+              // defined in your root CSS for its internal styling.
             />
           </PopoverContent>
         </Popover>
@@ -240,15 +250,19 @@ export default function AttendancePage() {
           placeholder="Search by employee name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-[240px]"
+          className="w-full sm:w-[240px] text-[var(--text-body)] dark:text-[var(--foreground)]"
+          // Shadcn-ui's Input component uses your --input, --background, --foreground, --ring variables
         />
 
         {/* Status Filter */}
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Filter by Status" />
+          <SelectTrigger className="w-full sm:w-[180px] text-[var(--text-body)] dark:text-[var(--foreground)]">
+            <SelectValue
+              placeholder="Filter by Status"
+              className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
+            />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
             <SelectItem value="All">All Statuses</SelectItem>
             <SelectItem value="Present">Present</SelectItem>
             <SelectItem value="Absent">Absent</SelectItem>
@@ -264,26 +278,28 @@ export default function AttendancePage() {
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50 dark:bg-gray-800">
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+            {/* Table Header Row background */}
+            <TableRow className="bg-[var(--bg-main)] dark:bg-[var(--popover)]">
+              {/* Table Headings text */}
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Employee
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Department
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Clock In
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Clock Out
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Hours
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Status
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Remarks
               </TableHead>
             </TableRow>
@@ -293,21 +309,24 @@ export default function AttendancePage() {
               filteredAttendance.map((record) => (
                 <TableRow
                   key={record.id}
-                  className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
+                  // Row hover background
+                  className="hover:bg-[var(--hover)]/50 dark:hover:bg-[var(--muted)]/50 transition-colors"
                 >
-                  <TableCell className="font-medium text-gray-800 dark:text-gray-200">
+                  {/* Employee Name & Hours (primary text) */}
+                  <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
                     {record.employeeName}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
+                  {/* Department, Clock In/Out, Remarks (muted text) */}
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                     {record.department}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                     {record.clockIn || "-"}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                     {record.clockOut || "-"}
                   </TableCell>
-                  <TableCell className="font-medium text-gray-800 dark:text-gray-200">
+                  <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
                     {calculateTotalHours(record.clockIn, record.clockOut)}
                   </TableCell>
                   <TableCell>
@@ -319,7 +338,7 @@ export default function AttendancePage() {
                       {record.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)] max-w-xs truncate">
                     {record.remarks || "-"}
                   </TableCell>
                 </TableRow>
@@ -328,7 +347,7 @@ export default function AttendancePage() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-gray-500 dark:text-gray-400"
+                  className="h-24 text-center text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
                 >
                   No attendance records found for the selected criteria.
                 </TableCell>

@@ -3,16 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* text.css – Responsive Admin Panel Typography */
 :root {
+  --font-family: "Poppins", sans-serif;
   --heading-font: "Poppins", Tahoma, Geneva, Verdana, sans-serif;
   --body-font: "Poppins", "Arial", sans-serif;
-  --text-color: #1f2937; /* gray-800 */
-  --muted-color: #6b7280; /* gray-500 */
+  --text-color: #303f53; /* gray-800 */
+  --muted-color: #000000; /* gray-500 */
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --background: #fff;
+  --foreground: #000000;
+  --card: #fff;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -41,11 +41,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --hover: #d1d5dc;
 
   /* My Tones */
 
   /* Backgrounds */
-  --bg-main: #f4f3f9; /* light gray */
+  --bg-main: #fbfbfb; /* light gray */
   --bg-section: #ffffff; /* blue-100 */
   --bg-accent: #eff6ff; /* blue-50 */
 
@@ -57,66 +58,18 @@
   /* Border & Accent */
   --border-color: #cbd5e1; /* slate-300 */
   --accent-color: #2563eb; /* blue-600 */
-
-  /* Poppins Font Family */
-
-  --font-family: "Poppins", sans-serif;
 }
 
-/* Base Typography */
 body {
   font-family: var(--font-family);
-  font-weight: var(--font-regular);
   color: var(--text-color);
+  background-color: var(--bg-main);
   line-height: 1.6;
 }
 
 .section {
-  background-color: var(--bg-section);
-}
-
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--heading-font);
-  color: var(--text-color);
-  margin-bottom: 0.5rem;
-  line-height: 1.25;
-  word-break: break-word;
-}
-:root {
-  --font-family: "Poppins", sans-serif;
-
-  --font-thin: 100;
-  --font-light: 300;
-  --font-regular: 400;
-  --font-medium: 500;
-  --font-semibold: 600;
-  --font-bold: 700;
-  --font-extrabold: 800;
-  --font-black: 900;
-
-  --heading-color: var(--text-heading, #1e293b);
-  --body-color: var(--text-body, #334155);
-  --muted-color: var(--text-muted, #64748b);
-
-  --body-font: var(--font-family);
-}
-
-/* Headings (responsive) */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
   font-family: var(--font-family);
-  color: var(--heading-color);
-  margin-bottom: 0.5rem;
+  background-color: var(--bg-section);
 }
 
 h1 {
@@ -147,22 +100,6 @@ h5 {
 h6 {
   font-size: clamp(0.875rem, 0.8vw + 0.5rem, 1rem); /* 14–16px */
   font-weight: var(--font-medium);
-}
-
-/* Paragraphs */
-p {
-  font-family: var(--body-font);
-  font-size: clamp(0.95rem, 0.4vw + 0.9rem, 1.1rem); /* 15–18px */
-  color: var(--body-color);
-  line-height: 1.75;
-  margin-bottom: 1rem;
-}
-
-/* Muted or secondary text */
-.text-muted {
-  color: var(--muted-color);
-  font-size: clamp(0.75rem, 0.5vw + 0.6rem, 0.875rem); /* 12–14px */
-  font-family: var(--body-font);
 }
 
 @theme inline {
@@ -244,23 +181,4 @@ p {
   body {
     @apply bg-background text-foreground;
   }
-}
-
-body {
-  font-family: var(--font-family);
-  font-weight: var(--font-regular);
-  background-color: var(--bg-main);
-  color: var(--text-body);
-  font-family: "Inter", sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  color: var(--text-heading);
-  font-family: "Poppins", sans-serif;
 }

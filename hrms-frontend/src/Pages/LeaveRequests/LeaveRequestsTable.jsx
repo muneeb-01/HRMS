@@ -69,15 +69,18 @@ export default function ApproveLeaveRequestsTable() {
   ]);
 
   const getStatusColor = (status) => {
+    // Keeping existing hardcoded colors for badge backgrounds, as no direct variables
+    // for specific status badge backgrounds were provided.
+    // Updated text color for dark mode to ensure readability against dark backgrounds.
     switch (status) {
       case "Approved":
-        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-[var(--foreground)]";
       case "Pending":
-        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-[var(--foreground)]";
       case "Rejected":
-        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200";
+        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-[var(--foreground)]";
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-[var(--foreground)]";
     }
   };
 
@@ -99,11 +102,13 @@ export default function ApproveLeaveRequestsTable() {
   const sortedDates = Object.keys(groupedRequests).sort().reverse();
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+    // Main container background and border
+    <div className="rounded-lg border-[var(--border-color)] bg-[var(--bg-section)] text-[var(--text-body)] shadow-sm p-6">
       <div className="overflow-x-auto">
         {sortedDates.map((date) => (
           <div key={date} className="mb-8">
-            <h4 className="text-lg font-semibold mb-3 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-t-lg border-b border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">
+            {/* Heading for date group */}
+            <h4 className="text-lg font-semibold mb-3 bg-[var(--bg-main)] dark:bg-[var(--card)] px-4 py-2 rounded-t-lg border-b border-[var(--border-color)] dark:border-[var(--border)] text-[var(--text-heading)]">
               Requests for{" "}
               {new Date(date).toLocaleDateString("en-US", {
                 weekday: "long",
@@ -114,23 +119,25 @@ export default function ApproveLeaveRequestsTable() {
             </h4>
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50 dark:bg-gray-800">
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                {/* Table Header Row background */}
+                <TableRow className="bg-[var(--bg-main)] dark:bg-[var(--popover)]">
+                  {/* Table Headings text */}
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                     Employee
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                     Department
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                     Type
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                     Reason
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                     Status
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm text-center">
+                  <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm text-center">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -139,18 +146,21 @@ export default function ApproveLeaveRequestsTable() {
                 {groupedRequests[date].map((request) => (
                   <TableRow
                     key={request.id}
-                    className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
+                    // Row hover background
+                    className="hover:bg-[var(--hover)]/50 dark:hover:bg-[var(--muted)]/50 transition-colors"
                   >
-                    <TableCell className="font-medium text-gray-800 dark:text-gray-200">
+                    {/* Employee Name (primary text) */}
+                    <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
                       {request.name}
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-400">
+                    {/* Department, Type, Reason (muted text) */}
+                    <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                       {request.department}
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-400">
+                    <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                       {request.type}
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                    <TableCell className="text-[var(--text-muted)] max-w-xs truncate">
                       {request.reason}
                     </TableCell>
                     <TableCell>
@@ -168,7 +178,8 @@ export default function ApproveLeaveRequestsTable() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
+                            // Using standard green/red for buttons, but can be customized
+                            className="text-green-600 hover:text-green-800 dark:text-[var(--primary)] dark:hover:text-[var(--primary-foreground)]"
                             onClick={() =>
                               handleStatusChange(request.id, "Approved")
                             }
@@ -178,7 +189,7 @@ export default function ApproveLeaveRequestsTable() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                            className="text-red-600 hover:text-red-800 dark:text-[var(--destructive)] dark:hover:text-[var(--destructive)]"
                             onClick={() =>
                               handleStatusChange(request.id, "Rejected")
                             }
@@ -187,7 +198,7 @@ export default function ApproveLeaveRequestsTable() {
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-gray-500 dark:text-gray-400 text-sm">
+                        <span className="text-[var(--text-muted)] text-sm">
                           {request.status === "Approved"
                             ? "Approved"
                             : "Rejected"}

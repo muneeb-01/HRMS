@@ -215,13 +215,13 @@ export default function PayrollPage() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Processed":
-        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-[var(--foreground)]";
       case "Pending":
-        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-[var(--foreground)]";
       case "On Hold":
-        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200";
+        return "bg-red-100 text-red-700 dark:bg-red-800 dark:text-[var(--foreground)]";
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-[var(--foreground)]";
     }
   };
 
@@ -354,8 +354,8 @@ export default function PayrollPage() {
   };
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-      <h3 className="text-xl font-bold mb-5 text-gray-900 dark:text-gray-100">
+    <div className="rounded-lg border-[var(--border-color)] bg-[var(--bg-section)] text-[var(--text-body)] shadow-sm p-6">
+      <h3 className="text-xl font-bold mb-5 text-[var(--text-heading)] dark:text-[var(--foreground)]">
         Payroll Management
       </h3>
 
@@ -365,10 +365,13 @@ export default function PayrollPage() {
           value={selectedPayrollMonth}
           onValueChange={setSelectedPayrollMonth}
         >
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Select Month" />
+          <SelectTrigger className="w-full sm:w-[180px] text-[var(--text-body)] dark:text-[var(--foreground)]">
+            <SelectValue
+              placeholder="Select Month"
+              className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
+            />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
             {availablePayrollMonths.map((month) => (
               <SelectItem key={month} value={month}>
                 {month}
@@ -383,15 +386,18 @@ export default function PayrollPage() {
           placeholder="Search by employee name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-[240px]"
+          className="w-full sm:w-[240px] text-[var(--text-body)] dark:text-[var(--foreground)]"
         />
 
         {/* Department Filter */}
         <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Filter by Department" />
+          <SelectTrigger className="w-full sm:w-[180px] text-[var(--text-body)] dark:text-[var(--foreground)]">
+            <SelectValue
+              placeholder="Filter by Department"
+              className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
+            />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
             {availableDepartments.map((dept) => (
               <SelectItem key={dept} value={dept}>
                 {dept}
@@ -402,10 +408,13 @@ export default function PayrollPage() {
 
         {/* Status Filter */}
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Filter by Status" />
+          <SelectTrigger className="w-full sm:w-[180px] text-[var(--text-body)] dark:text-[var(--foreground)]">
+            <SelectValue
+              placeholder="Filter by Status"
+              className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
+            />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
             {availableStatuses.map((status) => (
               <SelectItem key={status} value={status}>
                 {status}
@@ -422,15 +431,17 @@ export default function PayrollPage() {
           <DialogTrigger asChild>
             <Button
               onClick={handleProcessIncludedClick}
-              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white transition-colors"
+              className="w-full sm:w-auto bg-[var(--accent-color)] hover:bg-[var(--accent-color)]/90 dark:bg-[var(--primary)] dark:hover:bg-[var(--primary)]/90 text-white dark:text-[var(--primary-foreground)] transition-colors"
             >
               Process Included
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)]">
             <DialogHeader>
-              <DialogTitle>Confirm Payroll Processing</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-[var(--text-heading)] dark:text-[var(--foreground)]">
+                Confirm Payroll Processing
+              </DialogTitle>
+              <DialogDescription className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                 You are about to process payroll for **
                 {
                   filteredPayroll.filter(
@@ -460,39 +471,38 @@ export default function PayrollPage() {
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50 dark:bg-gray-800">
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+            <TableRow className="bg-[var(--bg-main)] dark:bg-[var(--popover)]">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 ID
-              </TableHead>{" "}
-              {/* New column for ID */}
-              {/* New column for extraction checkbox */}
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm w-[60px] text-center">
+              </TableHead>
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm w-[60px] text-center">
                 <input
                   type="checkbox"
+                  // Kept original class for checkbox styling, as no direct variable for it
+                  // Consider adding a custom CSS variable for form elements if you want to theme this.
                   className="form-checkbox h-4 w-4 text-red-600 rounded focus:ring-red-500 cursor-pointer"
                   checked={allDisplayedPendingExtracted}
                   onChange={(e) => handleToggleAllExtraction(e.target.checked)}
-                  title="Extract/Include All Pending"
+                  title="Toggle All Extraction"
                 />
-                <span className="sr-only">Toggle All Extraction</span>{" "}
-                {/* Accessible label */}
+                <span className="sr-only">Toggle All Extraction</span>
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Employee
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm">
                 Department
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm text-right">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm text-right">
                 Gross Pay
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm text-right">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm text-right">
                 Deductions
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm text-right">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm text-right">
                 Net Pay
               </TableHead>
-              <TableHead className="text-gray-600 dark:text-gray-300 font-semibold text-sm text-center">
+              <TableHead className="text-[var(--text-heading)] dark:text-[var(--foreground)] font-semibold text-sm text-center">
                 Status
               </TableHead>
             </TableRow>
@@ -502,28 +512,25 @@ export default function PayrollPage() {
               filteredPayroll.map((employee) => (
                 <TableRow
                   key={employee.id}
-                  // Highlight if NOT extracted AND pending (i.e., will be included in payment)
-                  className={`hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors ${
+                  className={`hover:bg-[var(--hover)]/50 dark:hover:bg-[var(--muted)]/50 transition-colors ${
                     !employee.extractedFromPayment &&
                     employee.status === "Pending"
-                      ? "bg-blue-50/50 dark:bg-blue-950/50"
+                      ? "bg-[var(--accent-color)]/[0.05] dark:bg-[var(--primary)]/[0.05]" // Subtle highlight for included pending
                       : ""
                   }`}
                 >
-                  <TableCell className="text-gray-600 dark:text-gray-400 font-medium">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)] font-medium">
                     {employee.id}
-                  </TableCell>{" "}
-                  {/* Display employee ID */}
-                  {/* Individual extraction checkbox */}
+                  </TableCell>
                   <TableCell className="text-center">
                     <input
                       type="checkbox"
+                      // Kept original class for checkbox styling
                       className="form-checkbox h-4 w-4 text-red-600 rounded focus:ring-red-500 cursor-pointer"
                       checked={employee.extractedFromPayment}
                       onChange={(e) =>
                         handleExtractFromPayment(employee.id, e.target.checked)
                       }
-                      // Disable if already processed
                       disabled={employee.status === "Processed"}
                       title={
                         employee.status === "Processed"
@@ -534,19 +541,19 @@ export default function PayrollPage() {
                       }
                     />
                   </TableCell>
-                  <TableCell className="font-medium text-gray-800 dark:text-gray-200">
+                  <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
                     {employee.employeeName}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                     {employee.department}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400 text-right">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)] text-right">
                     ${calculateGrossPay(employee).toLocaleString()}
                   </TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400 text-right">
+                  <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)] text-right">
                     ${calculateTotalDeductions(employee).toLocaleString()}
                   </TableCell>
-                  <TableCell className="font-bold text-gray-800 dark:text-gray-200 text-right">
+                  <TableCell className="font-bold text-[var(--text-body)] dark:text-[var(--foreground)] text-right">
                     ${calculateNetPay(employee).toLocaleString()}
                   </TableCell>
                   <TableCell className="text-center">
@@ -564,10 +571,8 @@ export default function PayrollPage() {
               <TableRow>
                 <TableCell
                   colSpan={8}
-                  className="h-24 text-center text-gray-500 dark:text-gray-400"
+                  className="h-24 text-center text-[var(--text-muted)] dark:text-[var(--muted-foreground)]"
                 >
-                  {" "}
-                  {/* Updated colSpan */}
                   No payroll records found for the selected criteria.
                 </TableCell>
               </TableRow>
