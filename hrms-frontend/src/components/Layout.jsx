@@ -16,7 +16,7 @@ export const Layout = () => {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar /> {/* Pass the close function */}
       <main className="w-full p-6">
         <Header />
         <h2 className="text-2xl font-semibold py-7 px-2">{pageTitle}</h2>
