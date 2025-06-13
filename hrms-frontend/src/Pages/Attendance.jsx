@@ -25,105 +25,28 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-
-// Dummy attendance data
-const allAttendanceRecords = [
-  {
-    id: 1,
-    employeeName: "Ahsan Khan",
-    department: "Engineering",
-    date: "2025-06-10",
-    clockIn: "09:00 AM",
-    clockOut: "05:00 PM",
-    status: "Present",
-    remarks: "",
-  },
-  {
-    id: 2,
-    employeeName: "Sara Ahmed",
-    department: "HR",
-    date: "2025-06-10",
-    clockIn: "09:30 AM",
-    clockOut: "05:00 PM",
-    status: "Late",
-    remarks: "Arrived due to traffic.",
-  },
-  {
-    id: 3,
-    employeeName: "Ali Raza",
-    department: "Finance",
-    date: "2025-06-10",
-    clockIn: null,
-    clockOut: null,
-    status: "Absent",
-    remarks: "Sick, no prior notice.",
-  },
-  {
-    id: 4,
-    employeeName: "Hina Batool",
-    department: "Marketing",
-    date: "2025-06-10",
-    clockIn: "08:55 AM",
-    clockOut: "04:30 PM",
-    status: "Early Out",
-    remarks: "Left for a doctor's appointment.",
-  },
-  {
-    id: 5,
-    employeeName: "Usman Ghani",
-    department: "Operations",
-    date: "2025-06-10",
-    clockIn: "09:00 AM",
-    clockOut: "05:00 PM",
-    status: "Present",
-    remarks: "",
-  },
-  {
-    id: 6,
-    employeeName: "Fatima Zahra",
-    department: "Sales",
-    date: "2025-06-10",
-    clockIn: null,
-    clockOut: null,
-    status: "On Leave",
-    remarks: "Annual Leave",
-  },
-  {
-    id: 7,
-    employeeName: "Zain Ali",
-    department: "Engineering",
-    date: "2025-06-11", // Different Date
-    clockIn: "09:05 AM",
-    clockOut: "05:00 PM",
-    status: "Late",
-    remarks: "Public transport delay.",
-  },
-  {
-    id: 8,
-    employeeName: "Sana Malik",
-    department: "HR",
-    date: "2025-06-11", // Different Date
-    clockIn: "09:00 AM",
-    clockOut: "05:00 PM",
-    status: "Present",
-    remarks: "",
-  },
-  {
-    id: 9,
-    employeeName: "Kamran Khan",
-    department: "Finance",
-    date: "2025-06-11", // Different Date
-    clockIn: null,
-    clockOut: null,
-    status: "Absent",
-    remarks: "Uninformed absence.",
-  },
-];
+import { useAppStore } from "../Store/index";
 
 export default function AttendancePage() {
+  const { attendances } = useAppStore();
   const [selectedDate, setSelectedDate] = useState(new Date("2025-06-10")); // Default to one of the dummy data dates
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+
+  const avaliableStatus = useMemo(() => {
+    const seen = new Set();
+    const uniqueStatus = attendances
+      .filter((attendance) => {
+        if (!seen.has(attendance.status)) {
+          seen.add(attendance.status);
+          return true;
+        }
+        return false;
+      })
+      .map((attendance) => attendance.status);
+
+    return ["All", ...uniqueStatus];
+  }, [attendances]);
 
   // Helper to get status color
   const getStatusColor = (status) => {
@@ -184,7 +107,7 @@ export default function AttendancePage() {
   const filteredAttendance = useMemo(() => {
     const formattedSelectedDate = format(selectedDate, "yyyy-MM-dd");
 
-    return allAttendanceRecords.filter((record) => {
+    return attendances.filter((record) => {
       // Filter by selected date
       if (record.date !== formattedSelectedDate) {
         return false;
@@ -193,7 +116,7 @@ export default function AttendancePage() {
       // Filter by search term (employee name)
       if (
         searchTerm &&
-        !record.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
+        !record.name.toLowerCase().includes(searchTerm.toLowerCase())
       ) {
         return false;
       }
@@ -263,14 +186,11 @@ export default function AttendancePage() {
             />
           </SelectTrigger>
           <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
-            <SelectItem value="All">All Statuses</SelectItem>
-            <SelectItem value="Present">Present</SelectItem>
-            <SelectItem value="Absent">Absent</SelectItem>
-            <SelectItem value="Late">Late</SelectItem>
-            <SelectItem value="Early Out">Early Out</SelectItem>
-            <SelectItem value="On Leave">On Leave</SelectItem>
-            <SelectItem value="Holiday">Holiday</SelectItem>
-            <SelectItem value="Weekend">Weekend</SelectItem>
+            {avaliableStatus.map((status, idx) => (
+              <SelectItem key={idx} value={status}>
+                {status}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -314,7 +234,7 @@ export default function AttendancePage() {
                 >
                   {/* Employee Name & Hours (primary text) */}
                   <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
-                    {record.employeeName}
+                    {record.name}
                   </TableCell>
                   {/* Department, Clock In/Out, Remarks (muted text) */}
                   <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">

@@ -7,50 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { useAppStore } from "../../Store/index";
 export default function LeaveRequestTable() {
-  const leaveRequests = [
-    {
-      id: 1,
-      name: "Sarah Khan",
-      department: "HR",
-      date: "2025-06-08",
-      type: "Sick Leave",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      name: "Ali Raza",
-      department: "Engineering",
-      date: "2025-06-06",
-      type: "Casual Leave",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      name: "Maria Ahmed",
-      department: "Finance",
-      date: "2025-06-04",
-      type: "Annual Leave",
-      status: "Rejected",
-    },
-    {
-      id: 4,
-      name: "Ahmed Malik",
-      department: "Marketing",
-      date: "2025-06-03",
-      type: "Maternity Leave",
-      status: "Approved",
-    },
-    {
-      id: 5,
-      name: "Fatima Zahra",
-      department: "Sales",
-      date: "2025-06-01",
-      type: "Paternity Leave",
-      status: "Pending",
-    },
-  ];
+  const { leaveRequests } = useAppStore();
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -92,7 +51,7 @@ export default function LeaveRequestTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {leaveRequests.map((request) => (
+            {leaveRequests.slice(0, 5).map((request) => (
               <TableRow
                 key={request.id}
                 className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"

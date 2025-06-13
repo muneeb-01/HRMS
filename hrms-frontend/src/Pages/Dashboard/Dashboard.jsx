@@ -15,7 +15,7 @@ const Dashboard = () => {
     <div className="space-y-6">
       <DashboardStatsCards />
       <Chart />
-      {/* <LeaveRequestTable /> */}
+      <LeaveRequestTable />
     </div>
   );
 };

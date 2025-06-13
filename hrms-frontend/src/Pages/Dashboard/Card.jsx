@@ -35,13 +35,13 @@ export default function DashboardStatsCards() {
           className="section rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
         >
           <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <CardTitle className="font-medium text-gray-700 dark:text-gray-300">
               {stat.title}
             </CardTitle>
             {stat.icon}
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            <p className="text-lg font-bold text-gray-900 dark:text-white">
               {stat.value}
             </p>
           </CardContent>

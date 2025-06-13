@@ -8,57 +8,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Pencil } from "lucide-react"; // Assuming lucide-react for icons
-
-// Dummy employee data
-const employees = [
-  {
-    id: 1,
-    name: "Ahsan Khan",
-    department: "Engineering",
-    position: "Frontend Developer",
-    status: "Active",
-    email: "ahsan@example.com",
-  },
-  {
-    id: 2,
-    name: "Sara Ahmed",
-    department: "HR",
-    position: "HR Manager",
-    status: "On Leave",
-    email: "sara@example.com",
-  },
-  {
-    id: 3,
-    name: "Ali Raza",
-    department: "Finance",
-    position: "Accountant",
-    status: "Inactive",
-    email: "ali@example.com",
-  },
-  {
-    id: 4,
-    name: "Hina Batool",
-    department: "Marketing",
-    position: "Marketing Specialist",
-    status: "Active",
-    email: "hina@example.com",
-  },
-  {
-    id: 5,
-    name: "Usman Ghani",
-    department: "Operations",
-    position: "Operations Lead",
-    status: "On Leave",
-    email: "usman@example.com",
-  },
-];
+import { useAppStore } from "../../Store/index";
 
 export default function EmployeesTable() {
-  // Helper function for status badge colors
+  const { employees } = useAppStore();
   const getStatusColor = (status) => {
-    // Keeping existing hardcoded colors for badges, as no direct variables
-    // for specific status badge backgrounds were provided.
-    // Updated text color for dark mode for better contrast.
     switch (status) {
       case "Active":
         return "bg-green-100 text-green-700 dark:bg-green-600 dark:text-[var(--foreground)]";

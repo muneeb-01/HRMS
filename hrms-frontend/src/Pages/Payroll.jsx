@@ -27,167 +27,63 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import { toast } from "react-hot-toast"; // Assuming react-hot-toast for notifications, but using console.log for no external dependency
+import { useAppStore } from "../Store/index";
 
-// Dummy payroll data for a specific month (e.g., June 2025)
-// Added 'extractedFromPayment' boolean to each employee
-const initialPayrollData = [
-  {
-    id: 1,
-    employeeName: "Ahsan Khan",
-    department: "Engineering",
-    basicSalary: 80000,
-    hra: 20000,
-    conveyance: 5000,
-    medicalAllowance: 3000,
-    pfDeduction: 5000,
-    taxDeduction: 7000,
-    loanDeduction: 2000,
-    status: "Processed",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false, // Processed, so not relevant for extraction
-  },
-  {
-    id: 2,
-    employeeName: "Sara Ahmed",
-    department: "HR",
-    basicSalary: 95000,
-    hra: 25000,
-    conveyance: 6000,
-    medicalAllowance: 4000,
-    pfDeduction: 6000,
-    taxDeduction: 9000,
-    loanDeduction: 0,
-    status: "Pending",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false, // Default: included for payment
-  },
-  {
-    id: 3,
-    employeeName: "Ali Raza",
-    department: "Finance",
-    basicSalary: 70000,
-    hra: 18000,
-    conveyance: 4500,
-    medicalAllowance: 2500,
-    pfDeduction: 4000,
-    taxDeduction: 6000,
-    loanDeduction: 1500,
-    status: "Processed",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false,
-  },
-  {
-    id: 4,
-    employeeName: "Hina Batool",
-    department: "Marketing",
-    basicSalary: 75000,
-    hra: 19000,
-    conveyance: 5000,
-    medicalAllowance: 3000,
-    pfDeduction: 4500,
-    taxDeduction: 6500,
-    loanDeduction: 0,
-    status: "Pending",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false,
-  },
-  {
-    id: 5,
-    employeeName: "Usman Ghani",
-    department: "Operations",
-    basicSalary: 85000,
-    hra: 22000,
-    conveyance: 5500,
-    medicalAllowance: 3500,
-    pfDeduction: 5500,
-    taxDeduction: 8000,
-    loanDeduction: 2500,
-    status: "Processed",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false,
-  },
-  {
-    id: 6,
-    employeeName: "Fatima Zahra",
-    department: "Sales",
-    basicSalary: 68000,
-    hra: 17000,
-    conveyance: 4000,
-    medicalAllowance: 2000,
-    pfDeduction: 3800,
-    taxDeduction: 5500,
-    loanDeduction: 0,
-    status: "Pending",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false,
-  },
-  {
-    id: 7,
-    employeeName: "Zain Ali",
-    department: "Engineering",
-    basicSalary: 90000,
-    hra: 24000,
-    conveyance: 5800,
-    medicalAllowance: 3800,
-    pfDeduction: 5800,
-    taxDeduction: 8500,
-    loanDeduction: 0,
-    status: "Pending",
-    payrollMonth: "2025-06",
-    extractedFromPayment: false,
-  },
-  {
-    id: 8,
-    employeeName: "Sana Malik",
-    department: "HR",
-    basicSalary: 72000,
-    hra: 18000,
-    conveyance: 4800,
-    medicalAllowance: 2800,
-    pfDeduction: 4200,
-    taxDeduction: 6200,
-    loanDeduction: 1000,
-    status: "Processed",
-    payrollMonth: "2025-05",
-    extractedFromPayment: false,
-  },
-  {
-    id: 9,
-    employeeName: "Kamran Khan",
-    department: "Finance",
-    basicSalary: 82000,
-    hra: 21000,
-    conveyance: 5300,
-    medicalAllowance: 3200,
-    pfDeduction: 5200,
-    taxDeduction: 7500,
-    loanDeduction: 0,
-    status: "Pending",
-    payrollMonth: "2025-05",
-    extractedFromPayment: false,
-  },
-];
-
-const availableDepartments = [
-  "All",
-  "Engineering",
-  "HR",
-  "Finance",
-  "Marketing",
-  "Operations",
-  "Sales",
-];
 const availablePayrollMonths = ["2025-06", "2025-05", "2025-04"]; // Example months
 const availableStatuses = ["All", "Processed", "Pending", "On Hold"];
 
 export default function PayrollPage() {
-  const [payrollData, setPayrollData] = useState(initialPayrollData);
+  const { payrolls } = useAppStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("All");
   const [selectedPayrollMonth, setSelectedPayrollMonth] = useState("2025-06");
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState("All");
+
+  const availablePayrollMonths = useMemo(() => {
+    const seen = new Set();
+    const uniqueMonths = payrolls
+      .filter((payroll) => {
+        if (!seen.has(payroll.payrollMonth)) {
+          seen.add(payroll.payrollMonth);
+          return true;
+        }
+        return false;
+      })
+      .map((payroll) => payroll.payrollMonth);
+
+    return ["All", ...uniqueMonths];
+  }, [payrolls]);
+
+  const availableStatuses = useMemo(() => {
+    const seen = new Set();
+    const uniqueStatuses = payrolls
+      .filter((payroll) => {
+        if (!seen.has(payroll.status)) {
+          seen.add(payroll.status);
+          return true;
+        }
+        return false;
+      })
+      .map((payroll) => payroll.status);
+
+    return ["All", ...uniqueStatuses];
+  }, [payrolls]);
+
+  const availableDepartments = useMemo(() => {
+    const seen = new Set();
+    const uniqueDepartments = payrolls
+      .filter((payroll) => {
+        if (!seen.has(payroll.department)) {
+          seen.add(payroll.department);
+          return true;
+        }
+        return false;
+      })
+      .map((payroll) => payroll.department);
+
+    return ["All", ...uniqueDepartments];
+  }, [payrolls]);
 
   // Helper to calculate gross pay
   const calculateGrossPay = (employee) => {
@@ -236,7 +132,7 @@ export default function PayrollPage() {
 
   // Filter and search logic for payroll data
   const filteredPayroll = useMemo(() => {
-    return payrollData.filter((record) => {
+    return payrolls.filter((record) => {
       // Filter by selected payroll month
       if (record.payrollMonth !== selectedPayrollMonth) {
         return false;
@@ -245,7 +141,7 @@ export default function PayrollPage() {
       // Filter by search term (employee name)
       if (
         searchTerm &&
-        !record.employeeName.toLowerCase().includes(searchTerm.toLowerCase())
+        !record.name.toLowerCase().includes(searchTerm.toLowerCase())
       ) {
         return false;
       }
@@ -266,7 +162,7 @@ export default function PayrollPage() {
       return true;
     });
   }, [
-    payrollData,
+    payrolls,
     searchTerm,
     filterDepartment,
     selectedPayrollMonth,
@@ -542,7 +438,7 @@ export default function PayrollPage() {
                     />
                   </TableCell>
                   <TableCell className="font-medium text-[var(--text-body)] dark:text-[var(--foreground)]">
-                    {employee.employeeName}
+                    {employee.name}
                   </TableCell>
                   <TableCell className="text-[var(--text-muted)] dark:text-[var(--muted-foreground)]">
                     {employee.department}

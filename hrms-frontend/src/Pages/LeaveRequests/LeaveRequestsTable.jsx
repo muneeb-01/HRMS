@@ -9,69 +9,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
+import { useAppStore } from "../../Store/index";
 export default function ApproveLeaveRequestsTable() {
-  const [leaveRequests, setLeaveRequests] = useState([
-    {
-      id: 1,
-      name: "Sarah Khan",
-      department: "HR",
-      date: "2025-06-08",
-      type: "Sick Leave",
-      reason: "Fever and flu, unable to come to office.",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      name: "Ali Raza",
-      department: "Engineering",
-      date: "2025-06-06",
-      type: "Casual Leave",
-      reason: "Attending a family wedding out of city.",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      name: "Maria Ahmed",
-      department: "Finance",
-      date: "2025-06-08", // Same date as Sarah Khan
-      type: "Annual Leave",
-      reason: "Planned vacation to northern areas.",
-      status: "Rejected",
-    },
-    {
-      id: 4,
-      name: "Ahmed Malik",
-      department: "Marketing",
-      date: "2025-06-07",
-      type: "Maternity Leave",
-      reason: "Expecting child, need rest.",
-      status: "Pending",
-    },
-    {
-      id: 5,
-      name: "Fatima Zahra",
-      department: "Sales",
-      date: "2025-06-07", // Same date as Ahmed Malik
-      type: "Paternity Leave",
-      reason: "To care for newborn and assist wife.",
-      status: "Pending",
-    },
-    {
-      id: 6,
-      name: "Usman Ali",
-      department: "Operations",
-      date: "2025-06-06", // Same date as Ali Raza
-      type: "Sick Leave",
-      reason: "Food poisoning, doctor advised rest.",
-      status: "Pending",
-    },
-  ]);
+  const { leaveRequests } = useAppStore();
 
   const getStatusColor = (status) => {
-    // Keeping existing hardcoded colors for badge backgrounds, as no direct variables
-    // for specific status badge backgrounds were provided.
-    // Updated text color for dark mode to ensure readability against dark backgrounds.
     switch (status) {
       case "Approved":
         return "bg-green-100 text-green-700 dark:bg-green-800 dark:text-[var(--foreground)]";
@@ -84,13 +26,7 @@ export default function ApproveLeaveRequestsTable() {
     }
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    setLeaveRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.id === id ? { ...request, status: newStatus } : request
-      )
-    );
-  };
+  const handleStatusChange = (id, newStatus) => {};
 
   // Group leave requests by date
   const groupedRequests = leaveRequests.reduce((acc, request) => {
