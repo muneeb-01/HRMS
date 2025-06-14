@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 // 1. Define initial form values outside the component
 // This prevents re-creation on every render, improving performance.
@@ -311,17 +313,17 @@ const AddEmployee = () => {
       >
         {label}
       </label>
-      <input
+      <Input
         type={type}
         id={id}
         inputMode={type === "number" ? "numeric" : undefined}
+        placeholder={placeholder}
         {...register(id, { min: 0 })}
-        className={`mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out ${
+        className={
           type === "number"
             ? "appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             : ""
-        }`}
-        placeholder={placeholder}
+        }
       />
     </div>
   );
@@ -601,12 +603,7 @@ const AddEmployee = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end mt-6">
-            <button
-              type="submit"
-              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
-            >
-              Add Employee
-            </button>
+            <Button type="submit">Add Employee</Button>
           </div>
         </form>
       </div>
