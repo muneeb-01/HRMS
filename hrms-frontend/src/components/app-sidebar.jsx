@@ -37,6 +37,7 @@ const sidebarLinks = [
           { to: "/attendance", icon: Calendar, label: "Attendance" },
           { to: "/payroll", icon: CreditCard, label: "Payroll" },
           { to: "/leaves-requests", icon: FileText, label: "Leave Requests" },
+          { to: "/add-employee", icon: Users, label: "Add Employee" },
         ],
       },
       // { to: "/departments", icon: Building2, label: "Departments" }, // Keep commented or remove as needed
@@ -67,9 +68,11 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
+    <Sidebar className="min-h-screen rounded-l-4xl overflow-hidden p-2">
       <SidebarHeader>
-        <h2 className="text-lg font-bold text-primary px-4 pt-4">HRMS</h2>
+        <h2 className="text-[var(--sidebar-foreground)] text-lg font-bold px-4 pt-4">
+          HRMS
+        </h2>
       </SidebarHeader>
 
       <SidebarContent>
@@ -128,10 +131,10 @@ export function AppSidebar() {
       <SidebarFooter>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900"
+          className="w-full justify-start gap-2 px-4 py-2 text-[#fff] hover:bg-red-100 dark:hover:bg-red-900"
           // You might also want to close sidebar on logout, if it navigates away
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4 text-[#FFAC53]" />
           Logout
         </Button>
       </SidebarFooter>

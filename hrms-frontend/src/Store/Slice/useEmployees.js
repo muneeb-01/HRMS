@@ -437,6 +437,19 @@ export const createEmployessSlice = (set, get) => ({
   currentModal: null,
   editingItem: null,
 
+  setPayrollData: (id, isChecked) => {
+    set((state) => {
+      return {
+        payrolls: state.payrolls.map((emp) =>
+          emp.id === id ? { ...emp, extractedFromPayment: isChecked } : emp
+        ),
+      };
+    });
+  },
+  setAllPayrollData: (payrolls) => {
+    set({ payrolls });
+  },
+
   // --- Employee Actions ---
   fetchEmployees: async () => {
     set((state) => ({

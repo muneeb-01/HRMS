@@ -33,7 +33,7 @@ const availablePayrollMonths = ["2025-06", "2025-05", "2025-04"]; // Example mon
 const availableStatuses = ["All", "Processed", "Pending", "On Hold"];
 
 export default function PayrollPage() {
-  const { payrolls } = useAppStore();
+  const { payrolls, setPayrollData, setAllPayrollData } = useAppStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("All");
   const [selectedPayrollMonth, setSelectedPayrollMonth] = useState("2025-06");
@@ -52,7 +52,7 @@ export default function PayrollPage() {
       })
       .map((payroll) => payroll.payrollMonth);
 
-    return ["All", ...uniqueMonths];
+    return [...uniqueMonths];
   }, [payrolls]);
 
   const availableStatuses = useMemo(() => {
@@ -123,11 +123,7 @@ export default function PayrollPage() {
 
   // Handler for individual employee extraction checkbox
   const handleExtractFromPayment = (id, isChecked) => {
-    setPayrollData((prevData) =>
-      prevData.map((emp) =>
-        emp.id === id ? { ...emp, extractedFromPayment: isChecked } : emp
-      )
-    );
+    setPayrollData(id, isChecked);
   };
 
   // Filter and search logic for payroll data
@@ -139,10 +135,7 @@ export default function PayrollPage() {
       }
 
       // Filter by search term (employee name)
-      if (
-        searchTerm &&
-        !record.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ) {
+      if (searchTerm && !new RegExp(searchTerm, "i").test(record.name)) {
         return false;
       }
 
@@ -180,24 +173,21 @@ export default function PayrollPage() {
 
   // Handler for master "Extract All / Include All" checkbox
   const handleToggleAllExtraction = (isChecked) => {
-    setPayrollData((prevData) =>
-      prevData.map((emp) => {
-        // Only modify if currently pending and displayed
-        if (
-          emp.payrollMonth === selectedPayrollMonth &&
-          emp.status === "Pending" &&
-          (filterDepartment === "All" || emp.department === filterDepartment) &&
-          (searchTerm === "" ||
-            emp.employeeName
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase())) &&
-          (filterStatus === "All" || emp.status === filterStatus)
-        ) {
-          return { ...emp, extractedFromPayment: isChecked };
-        }
-        return emp;
-      })
-    );
+    const mappedPayrolls = payrolls.map((emp) => {
+      // Only modify if currently pending and displayed
+      if (
+        emp.payrollMonth === selectedPayrollMonth &&
+        emp.status === "Pending" &&
+        (filterDepartment === "All" || emp.department === filterDepartment) &&
+        (searchTerm === "" ||
+          emp.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (filterStatus === "All" || emp.status === filterStatus)
+      ) {
+        return { ...emp, extractedFromPayment: isChecked };
+      }
+      return emp;
+    });
+    setAllPayrollData(mappedPayrolls);
   };
 
   // Function to actually process payroll after confirmation
@@ -213,20 +203,19 @@ export default function PayrollPage() {
       return;
     }
 
-    setPayrollData((prevData) =>
-      prevData.map((emp) =>
-        // Process only if: matches selected month, is Pending, is NOT extracted, and matches other display filters
-        emp.payrollMonth === selectedPayrollMonth &&
-        emp.status === "Pending" &&
-        !emp.extractedFromPayment && // Crucial change: only process if NOT extracted
-        (filterDepartment === "All" || emp.department === filterDepartment) &&
-        (searchTerm === "" ||
-          emp.employeeName.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (filterStatus === "All" || emp.status === filterStatus)
-          ? { ...emp, status: "Processed", extractedFromPayment: false } // Set to processed and unmark for extraction
-          : emp
-      )
+    const processedPayrollEmp = payrolls.map((emp) =>
+      // Process only if: matches selected month, is Pending, is NOT extracted, and matches other display filters
+      emp.payrollMonth === selectedPayrollMonth &&
+      emp.status === "Pending" &&
+      !emp.extractedFromPayment && // Crucial change: only process if NOT extracted
+      (filterDepartment === "All" || emp.department === filterDepartment) &&
+      (searchTerm === "" ||
+        emp.employeeName.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (filterStatus === "All" || emp.status === filterStatus)
+        ? { ...emp, status: "Processed", extractedFromPayment: false } // Set to processed and unmark for extraction
+        : emp
     );
+    setAllPayrollData(processedPayrollEmp);
     console.log(
       `Payroll processed for ${employeesToProcess.length} employees.`
     );
@@ -239,7 +228,6 @@ export default function PayrollPage() {
     const includedPendingCount = filteredPayroll.filter(
       (emp) => emp.status === "Pending" && !emp.extractedFromPayment
     ).length;
-
     if (includedPendingCount === 0) {
       console.error(
         "No pending employees to process for the selected filters."
@@ -268,8 +256,8 @@ export default function PayrollPage() {
             />
           </SelectTrigger>
           <SelectContent className="bg-[var(--popover)] text-[var(--popover-foreground)]">
-            {availablePayrollMonths.map((month) => (
-              <SelectItem key={month} value={month}>
+            {availablePayrollMonths.map((month, idx) => (
+              <SelectItem key={idx} value={month}>
                 {month}
               </SelectItem>
             ))}

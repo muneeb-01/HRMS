@@ -22,7 +22,7 @@ const data = [
 
 export default function EmployeeGraph() {
   return (
-    <div className="w-full max-w-full h-[300px] sm:h-[400px] md:h-[400px] lg:h-[450px] rounded-xl border bg-white p-4 shadow-sm">
+    <div className="section w-full max-w-full h-[300px] sm:h-[400px] md:h-[400px] lg:h-[450px] rounded-xl border bg-white p-4 shadow-sm">
       <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-4">
         Monthly Hiring Trend
       </h3>

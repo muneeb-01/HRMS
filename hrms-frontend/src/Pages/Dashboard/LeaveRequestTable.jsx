@@ -25,7 +25,7 @@ export default function LeaveRequestTable() {
   };
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+    <div className="section rounded-lg border bg-card text-card-foreground shadow-sm p-6">
       <h3 className="text-xl font-bold mb-5 text-gray-900 dark:text-gray-100">
         Recent Leave Requests
       </h3>

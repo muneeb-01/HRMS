@@ -19,7 +19,8 @@ export const Layout = () => {
       <AppSidebar /> {/* Pass the close function */}
       <main className="w-full p-6">
         <Header />
-        <h2 className="text-2xl font-semibold py-7 px-2">{pageTitle}</h2>
+
+        <h2 className="font-semibold py-7 px-2">{pageTitle}</h2>
         <div className="px-2">
           <Outlet />
         </div>

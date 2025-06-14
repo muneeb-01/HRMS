@@ -7,6 +7,7 @@ import LeaveRequests from "./Pages/LeaveRequests/LeaveRequests";
 import Payroll from "./Pages/Payroll";
 import { AuthRoute, PrivateRoute } from "./components/AuthRoutes";
 import Attendance from "./Pages/Attendance";
+import AddEmployee from "./Pages/AddEmployee";
 
 // import { ToastContainer } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
@@ -76,6 +77,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Payroll />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="add-employee"
+            element={
+              <PrivateRoute>
+                <AddEmployee />
               </PrivateRoute>
             }
           />
