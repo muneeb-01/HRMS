@@ -34,8 +34,8 @@ export default function EmployeeGraph() {
           >
             <defs>
               <linearGradient id="colorEmployees" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2E9ADC" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#2E9ADC" stopOpacity={0} />
+                <stop offset="5%" stopColor="#255334" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#255334" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
@@ -45,7 +45,7 @@ export default function EmployeeGraph() {
             <Area
               type="monotone"
               dataKey="Employees"
-              stroke="#2E9ADC"
+              stroke="#255334"
               strokeWidth={2}
               fill="url(#colorEmployees)"
             />

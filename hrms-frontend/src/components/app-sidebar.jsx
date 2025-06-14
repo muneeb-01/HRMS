@@ -38,6 +38,7 @@ const sidebarLinks = [
           { to: "/payroll", icon: CreditCard, label: "Payroll" },
           { to: "/leaves-requests", icon: FileText, label: "Leave Requests" },
           { to: "/add-employee", icon: Users, label: "Add Employee" },
+          { to: "/single-employee", icon: Users, label: "Employee Profile" },
         ],
       },
       // { to: "/departments", icon: Building2, label: "Departments" }, // Keep commented or remove as needed
